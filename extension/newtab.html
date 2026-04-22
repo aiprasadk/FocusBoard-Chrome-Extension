@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusBoard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <div class="overlay"></div>
+  <div id="focus-pulse" class="focus-pulse"></div>
+  <div class="focus-indicator" id="focus-indicator"></div>
+  
+  <div class="container">
+    <div id="streak-display" class="streak-display fade-in"></div>
+    <div id="focus-time-display" class="focus-time-display fade-in delay-1" style="position: absolute; top: 2rem; left: 2rem; font-weight: 600; font-size: 1.1rem; background: var(--panel-bg); padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.2); backdrop-filter: blur(8px);">Focused today: 0m</div>
+    <div style="position: absolute; bottom: 2rem; right: 2rem; display: flex; gap: 1rem;">
+      <button id="analytics-toggle" class="icon-btn" style="position: relative; right: auto; bottom: auto; width: 48px; height: 48px; font-size: 1.5rem; background: rgba(0, 0, 0, 0.6); border-radius: 50%; color: white; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);" aria-label="Open Analytics">📊</button>
+      <button id="settings-toggle" class="icon-btn" style="position: relative; right: auto; bottom: auto; width: 48px; height: 48px; font-size: 1.5rem; background: rgba(0, 0, 0, 0.6); border-radius: 50%; color: white; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);" aria-label="Open Settings">⚙</button>
+    </div>
+    
+    <div class="focus-mode-wrapper fade-in delay-2">
+      <label class="switch">
+        <input type="checkbox" id="focus-mode-toggle" aria-label="Toggle Focus Mode">
+        <span class="slider round"></span>
+      </label>
+      <span id="focus-mode-label" class="focus-mode-label">Focus Mode: OFF</span>
+    </div>
+
+    <div id="clock" class="clock fade-in"></div>
+    <div id="greeting" class="greeting fade-in"></div>
+
+    <div id="focus-container" class="focus-container fade-in">
+      <input type="text" id="focus-input" class="focus-input" placeholder="What is your main focus today?" autocomplete="off" aria-label="Daily Focus Input" />
+      <div id="focus-display" class="focus-display hidden">
+        <div class="focus-label">TODAY'S FOCUS</div>
+        <div class="focus-text-wrapper">
+          <span id="focus-text"></span>
+          <button id="focus-edit" class="icon-btn" aria-label="Edit Focus">✎</button>
+        </div>
+      </div>
+    </div>
+    <div id="daily-quote" class="daily-quote fade-in delay-2"></div>
+
+    <div class="search-container fade-in delay-1">
+      <form action="https://www.google.com/search" method="get" id="search-form">
+        <input type="text" name="q" class="search-input" placeholder="Search Google..." autocomplete="off" aria-label="Google Search" />
+      </form>
+    </div>
+
+    <div class="pomodoro-panel fade-in delay-2">
+      <h3>Pomodoro</h3>
+      <div id="pomo-time" class="pomo-time">25:00</div>
+      <div id="pomo-mode" class="pomo-mode">Focus Session</div>
+      <div class="pomo-controls">
+        <button id="pomo-start" class="btn primary">Start</button>
+        <button id="pomo-pause" class="btn secondary" style="display:none;">Pause</button>
+        <button id="pomo-reset" class="btn secondary">Reset</button>
+      </div>
+    </div>
+
+    <div class="task-panel fade-in delay-3">
+      <div class="task-header">
+        <h3>Tasks</h3>
+        <span id="task-count">0/0 done</span>
+      </div>
+      <div id="category-filters" class="category-filters"></div>
+      <div id="task-list" class="task-list"></div>
+      <div class="task-input-wrapper">
+        <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem;">
+          <select id="task-category" class="block-input" style="width: auto; padding: 0.5rem;" aria-label="Task Category"></select>
+          <input type="text" id="task-input" class="task-input" placeholder="Add a new task..." maxlength="150" autocomplete="off" aria-label="New Task Input" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="settings-modal" class="settings-modal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="settings-close" class="icon-btn" aria-label="Close Settings">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="setting-group">
+          <label for="setting-name">Your Name</label>
+          <input type="text" id="setting-name" class="block-input" placeholder="Prasad" autocomplete="off" />
+        </div>
+        <div class="setting-group">
+          <label for="theme-toggle">Theme</label>
+          <select id="theme-toggle" class="block-input">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label>Clock Format</label>
+          <div class="toggle-group">
+            <label><input type="radio" name="clock-format" value="12h" checked> 12-hour</label>
+            <label><input type="radio" name="clock-format" value="24h"> 24-hour</label>
+          </div>
+        </div>
+        <div class="setting-group">
+          <label>Wallpaper Background</label>
+          <div class="flex-input">
+            <select id="rotation-mode" class="block-input" style="width:120px;">
+              <option value="tab">Every Tab</option>
+              <option value="daily">Daily</option>
+              <option value="random">Random</option>
+            </select>
+            <input type="file" id="setting-wallpaper" class="block-input file-input" accept="image/png, image/jpeg, image/webp" />
+          </div>
+          <div id="wallpaper-gallery" class="wallpaper-gallery"></div>
+          <button id="wallpaper-reset" class="btn secondary" style="margin-top: 0.5rem;">Reset to Default</button>
+        </div>
+        <div class="setting-group">
+          <label>Blocked Distractions (Focus Mode)</label>
+          <div id="blocked-sites-list" class="blocked-list"></div>
+          <div class="flex-input">
+            <input type="text" id="add-site-input" class="block-input" placeholder="e.g. reddit.com" autocomplete="off" />
+            <button id="add-site-btn" class="btn primary">Add</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <label>Focus Mode Schedule</label>
+          <div class="flex-input">
+            <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" id="schedule-enabled"> Enable automatic focus mode</label>
+          </div>
+          <div class="flex-input" id="schedule-times" style="display:none; margin-top:0.5rem; gap:1rem;">
+            <div style="flex: 1;">
+              <label style="font-size: 0.8rem;">Start Time</label>
+              <input type="time" id="schedule-start" class="block-input" />
+            </div>
+            <div style="flex: 1;">
+              <label style="font-size: 0.8rem;">End Time</label>
+              <input type="time" id="schedule-end" class="block-input" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="features/events.js"></script>
+  <script src="features/quotes.js"></script>
+  <script src="features/streak.js"></script>
+  <script src="features/theme.js"></script>
+  <script src="features/pomodoro.js"></script>
+  <script src="features/categories.js"></script>
+  <script src="features/wallpaper.js"></script>
+  <script src="features/schedule.js"></script>
+  <script src="features/focus.js"></script>
+  <script src="features/tasks.js"></script>
+  <script src="features/focusTime.js"></script>
+  <script src="newtab.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>
